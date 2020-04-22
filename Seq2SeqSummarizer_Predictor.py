@@ -5,9 +5,7 @@ import numpy as np
 from keras.preprocessing.sequence import pad_sequences
 from keras.models import model_from_json, load_model
 
-# make text, summary into sequence
 def preprocess(text, maxlen_text):
-    # make sequences 
     remove_list=' ! " # $ % & ( ) * + , - . / : ; < = > ? @ [ \\ ] ^ _ ` { | } ~ \t \n'.split(' ')
     text = text.lower()
     for i in range(len(remove_list)):
@@ -37,7 +35,7 @@ def load_glove(embedding_dim):
     # print('Found %s word vectors.' % len(embeddings_index))
 
     # maps word_index to Glove vector 
-    # embedding_matrix[index of token] = Glove vector => [vec]
+    # embedding_matrix[index of token] = Glove vector
     embedding_matrix = np.zeros((max_words, embedding_dim))
     for n, word in reverse_word_index.items():
         i = int(n)
@@ -51,18 +49,17 @@ def load_glove(embedding_dim):
 # embedded input vectors
 def embed_sequences(text, embedding_index, maxlen_text, embedding_dim):
     emb_text = np.zeros((len(text),maxlen_text, embedding_dim))
-    # emb_summary = np.zeros((len(summary),maxlen_summary,100))
     for i in range(maxlen_text):
         if text[i] in embedding_index:
             emb_text[i] = embedding_index[text[i]]
         else:
             emb_text[i] = np.zeros(embedding_dim)
-    return emb_text #, emb_summary
+    return emb_text
 
 # configuration info
-maxlen_text = 100  # We will cut texts after 100 words
-maxlen_summary = 4 # We will cut summaries after 20 words
-max_words = 5000  # We will only consider the top 10,000 words in the dataset
+maxlen_text = 100  # text length
+maxlen_summary = 4 # summary length
+max_words = 5000  # vocabulary size
 embedding_dim = 100
 
 # print('Load data...')
