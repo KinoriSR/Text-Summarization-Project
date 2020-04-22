@@ -119,11 +119,9 @@ def embed_sequences(text, embedding_matrix, maxlen_text, maxlen_summary): # summ
     return emb_text 
 
 # configuration info
-maxlen_text = 100  # We will cut texts after 100 words
-maxlen_summary = 4 # We will cut summaries after 20 words
-training_samples = 200  # We will be training on 200 samples
-validation_samples = 10  # We will be validating on 10 samples
-max_words = 5000  # We will only consider the top 10,000 words in the dataset
+maxlen_text = 100  # max text length
+maxlen_summary = 4 # max summary length
+max_words = 5000  # max vocabulary size
 
 print('Load data...')
 train, test, validate = load_data('aeslc')
