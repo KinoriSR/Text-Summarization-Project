@@ -113,13 +113,10 @@ def load_glove(embedding_dim):
 # embedded input vectors
 def embed_sequences(text, embedding_matrix, maxlen_text, maxlen_summary): # summary
     emb_text = np.zeros((len(text),maxlen_text,100))
-    # emb_summary = np.zeros((len(summary),maxlen_summary,100))
     for i in range(len(text)):
         for j in range(maxlen_text):
             emb_text[i][j] = embedding_matrix[text[i][j]]
-        # for k in range(maxlen_summary):
-        #     emb_summary[i][k] = embedding_matrix[summary[i][k]]
-    return emb_text #, emb_summary
+    return emb_text 
 
 # configuration info
 maxlen_text = 100  # We will cut texts after 100 words
@@ -151,8 +148,6 @@ for k, v in tokenizer.word_index.items():
         reverse_word_index[v] = k
 print('Found %s unique tokens.' % len(word_index))
 
-# FOR LOOP FROM HERE:
-
 print('Sequencing...')
 data_text_train, data_summary_train = make_sequences(tokenizer, text_train, summary_train, maxlen_text, maxlen_summary)
 data_text_test, data_summary_test = make_sequences(tokenizer, text_test, summary_test, maxlen_text, maxlen_summary)
@@ -183,7 +178,7 @@ emb_data_text_validate = embed_sequences(data_text_validate, embedding_matrix, m
 # word <=> index (sequence) <=>  *embedded vector*
 
 '''
-MODEL:
+MODELING:
 https://github.com/chen0040/keras-text-summarization/blob/master/keras_text_summarization/library/seq2seq.py
 '''
 GLOVE_EMBEDDING_SIZE = 100
@@ -195,14 +190,10 @@ encoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, name='encoder_lstm')
 encoder_outputs, encoder_state_h, encoder_state_c = encoder_lstm(encoder_inputs)
 encoder_states = [encoder_state_h, encoder_state_c]
 
-# try: decoder_inputs = Input(shape=(None, max_words), name='decoder_inputs')
-# and: no transpose
-#decoder_inputs = Input(shape=(None, maxlen_summary), name='decoder_inputs')
 decoder_inputs = Input(shape=(None, max_words), name='decoder_inputs')
 decoder_lstm = LSTM(units=HIDDEN_UNITS, return_state=True, return_sequences=True, name='decoder_lstm')
 decoder_outputs, decoder_state_h, decoder_state_c = decoder_lstm(decoder_inputs,
                                                                  initial_state=encoder_states)
-# decoder_dense = Dense(units=maxlen_summary, activation='softmax', name='decoder_dense')
 decoder_dense = Dense(units=max_words, activation='softmax', name='decoder_dense')
 decoder_outputs = decoder_dense(decoder_outputs)
 
@@ -223,11 +214,7 @@ print(model.summary(), encoder_model.summary(),decoder_model.summary())
 print('Fitting Model...\n')
 epochs = 20
 
-# data_summary_test_decoder_in = data_summary_test_decoder_in.transpose(0, 2, 1)
-# data_summary_train_decoder_in = data_summary_train_decoder_in.transpose(0, 2, 1)
-# data_summary_test_decoder_out = data_summary_test_decoder_out.transpose(0, 2, 1)
-# data_summary_train_decoder_out = data_summary_train_decoder_out.transpose(0, 2, 1)
-print('decode_in shape: ', data_summary_test_decoder_in.shape)
+# print('decode_in shape: ', data_summary_test_decoder_in.shape)
 
 model.fit([emb_data_text_train, data_summary_train_decoder_in], data_summary_train_decoder_out,
          batch_size = 32,
@@ -238,18 +225,6 @@ model.fit([emb_data_text_train, data_summary_train_decoder_in], data_summary_tra
 
 print('Saving model in Encoder_Decoder_save1.h5...')
 model.save("Encoder_Decoder_save1.h5")
-
-# serialize model to JSON
-# reinitialized_model = keras.models.model_from_json(json_config)
-print('Saving model in Encoder_Decoder_save2.json...')
-model_json = model.to_json()
-with open("Encoder_Decoder_save2.json", "w") as json_file:
-    json_file.write(model_json)
-# serialize weights to HDF5
-print('Saving weights in Encoder_Decoder_save_Weights.h5...')
-model.save_weights("Encoder_Decoder_save_Weights.h5")
-print("Saved model to disk")
-
 print('saving encode model...')
 encoder_model.save("Encoder_model_version1.h5")
 print('saving Decoder model...')
@@ -262,10 +237,7 @@ print(trained_model.summary())
 print(trained_encoder_model.summary())
 print(trained_decoder_model.summary())
 
-#emb_data_text_validate # encoder_in
-# data_summary_validate_decoder_in = data_summary_validate_decoder_in.transpose(0, 2, 1)
-# data_summary_validate_decoder_out = data_summary_validate_decoder_out.transpose(0, 2, 1)
-
+# Predict the first 10 in the test set
 for summary in range(10):
     terminated = False
     target_text_len = 0
@@ -286,8 +258,6 @@ for summary in range(10):
             output_tokens[0, -1, sample_token_idx] = -1.
             #print(output_tokens)
             sample_token_idx = np.argmax(output_tokens[0, -1, :])
-
-            #sample_token_idx = np.argmax(output_tokens[0, -1, :])
         sample_word = reverse_word_index[sample_token_idx]
 
 
