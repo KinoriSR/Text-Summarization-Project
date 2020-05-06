@@ -1,5 +1,6 @@
 # Abstractive-Text-Summarization-Project
-First attempt at an NLP/NLU project. This was a project completed for our Artificial Intelligence course. The purpose of the project was to explore the space of NLP/NLU and get hands on experience working with deep learning as a tool. We used an Encoder-Decoder NN architecture to model emails and output their subjects. If we have time we would like to try summarizing different text as emails and their subjects sometimes don't appear related. We used Tensorflow and Keras for the deep learning.
+First attempt at an NLP/NLU project. This was a project completed for our Artificial Intelligence course. The purpose of the project was to explore the space of NLP/NLU and get hands on experience working with deep learning as a tool. We used an Encoder-Decoder NN architecture to model emails and output their subjects. If we have time we would like to try summarizing different text as emails and their subjects sometimes don't appear related. We used Tensorflow and Keras for the deep learning. Much of the modeling was learned from cited sources below.
+
 ### Define:
 Text - Body of language to be summarized.  <br />
 Summary - Distilled meaning of text.
